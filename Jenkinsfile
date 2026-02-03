@@ -21,7 +21,7 @@ pipeline {
         }
          stage ('Maven Test'){
             steps {
-                sh 'mvn Test'
+                sh 'mvn test'
             }
         }
         stage ('Maven Package'){
