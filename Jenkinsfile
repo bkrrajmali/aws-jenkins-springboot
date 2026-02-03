@@ -1,9 +1,9 @@
 pipeline {
     agent any
     stages {
-        stage('Example') {
+        stage('Checkout From Git') {
             steps {
-                echo 'Hello World'
+                git branch:'prod' , url: "https://github.com/bkrrajmali/aws-jenkins-springboot.git"
             }
         }
     }
