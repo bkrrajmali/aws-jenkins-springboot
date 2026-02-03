@@ -14,9 +14,19 @@ pipeline {
                 sh 'mvn validate'
             }
         }
-        stage ('Maven Test'){
+        stage ('Maven Compile'){
             steps {
-                sh 'mvn test'
+                sh 'mvn compile'
+            }
+        }
+         stage ('Maven Test'){
+            steps {
+                sh 'mvn Test'
+            }
+        }
+        stage ('Maven Package'){
+            steps {
+                sh 'mvn package'
             }
         }
     }
