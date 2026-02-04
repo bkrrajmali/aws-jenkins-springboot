@@ -11,21 +11,21 @@ pipeline {
         }
         stage ('Maven Parallel Stages') {
             parallel {
-            stage ('Maven Validate'){
-            steps {
-                sh 'mvn validate'
-            }
-        }
-        stage ('Maven Compile'){
-            steps {
-                sh 'mvn compile'
-            }
-        }
-         stage ('Maven Test'){
-            steps {
-                sh 'mvn test'
-            }
-        }
+        //     stage ('Maven Validate'){
+        //     steps {
+        //         sh 'mvn validate'
+        //     }
+        // }
+        // stage ('Maven Compile'){
+        //     steps {
+        //         sh 'mvn compile'
+        //     }
+        // }
+        //  stage ('Maven Test'){
+        //     steps {
+        //         sh 'mvn test'
+        //     }
+        // }
         stage ('Maven Package'){
             steps {
                 sh 'mvn package'
@@ -40,29 +40,29 @@ pipeline {
     //           }
     //        }
     //     }
-    stage('Sonar Analysis') {
-    steps {
-        script {
-            def scannerHome = tool 'sonar-scanner'
-            withSonarQubeEnv('sonarserver') {
-                sh """
-                ${scannerHome}/bin/sonar-scanner \
-                -Dsonar.organization=bkrrajmali \
-                -Dsonar.projectName=SpringBootPet \
-                -Dsonar.projectKey=bkrrajmali_springbootpet \
-                -Dsonar.java.binaries=target
-                """
-                        }
-                    }
-                }
-            }
-    stage("Quality Gate") {
-            steps {
-              timeout(time: 1, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
-              }
-            }
-          }
+    // stage('Sonar Analysis') {
+    // steps {
+    //     script {
+    //         def scannerHome = tool 'sonar-scanner'
+    //         withSonarQubeEnv('sonarserver') {
+    //             sh """
+    //             ${scannerHome}/bin/sonar-scanner \
+    //             -Dsonar.organization=bkrrajmali \
+    //             -Dsonar.projectName=SpringBootPet \
+    //             -Dsonar.projectKey=bkrrajmali_springbootpet \
+    //             -Dsonar.java.binaries=target
+    //             """
+    //                     }
+    //                 }
+    //             }
+    //         }
+    // stage("Quality Gate") {
+    //         steps {
+    //           timeout(time: 1, unit: 'MINUTES') {
+    //             waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
+    //           }
+    //         }
+    //       }
         stage("Build Docker Image and TAG") {
             steps {
               script {
