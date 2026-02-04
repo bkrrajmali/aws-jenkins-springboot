@@ -73,7 +73,7 @@ pipeline {
         stage("Trivy Scan") {
             steps {
               script {
-                sh 'trivy image --format table --scanner vuln -o trivy-image-report.html springboot:latest'
+                sh 'trivy image --format table --scanners vuln -o trivy-image-report.html springboot:latest'
               }
             }
         }
