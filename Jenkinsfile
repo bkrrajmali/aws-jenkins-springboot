@@ -37,10 +37,8 @@ pipeline {
         steps {
             withSonarQubeEnv('sonar') {
                 sh ''' 
-                echo "SCANNER_HOME=$SCANNER_HOME"
-                which sonar-scanner || true
-                sonar-scanner -Dsonar.projectName=SpringBootPet -Dsonar.projectKey=bkrrajmali_springbootpet \
-                        -Dsonar.java.binaries=. '''
+                $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=SpringBootPet -Dsonar.projectKey=bkrrajmali_springbootpet \
+                -Dsonar.java.binaries=. '''
               }
            }
         }
