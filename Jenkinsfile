@@ -52,10 +52,17 @@ pipeline {
                 -Dsonar.projectKey=bkrrajmali_springbootpet \
                 -Dsonar.java.binaries=target
                 """
+                        }
+                    }
+                }
             }
-        }
-    }
-}
+    stage("Quality Gate") {
+            steps {
+              timeout(time: 1, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
+              }
+            }
+          }
 
-    }
+        }
 }
