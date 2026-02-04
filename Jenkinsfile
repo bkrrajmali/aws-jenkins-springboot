@@ -35,7 +35,7 @@ pipeline {
        }
        stage ('Sonar Analysis') {
         steps {
-            withSonarQubeEnv('sonar-server') {
+            withSonarQubeEnv('sonar') {
                 sh ''' 
                 echo "SCANNER_HOME=$SCANNER_HOME"
                 which sonar-scanner || true
