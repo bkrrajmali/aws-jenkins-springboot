@@ -35,9 +35,9 @@ pipeline {
        }
        stage ('Sonar Analysis') {
         steps {
-            withSonarQubeEnv('sonar') {
+            withSonarQubeEnv('sonarserver') {
                 sh ''' 
-                $SCANNER_HOME/bin/sonar-scanner -Dsonar.organization=bkrrajmali -Dsonar.projectName=SpringBootpet -Dsonar.projectKey=bkrrajmali_springbootpet \
+                $SCANNER_HOME/bin/sonar-scanner -Dsonar.organization=bkrrajmali -Dsonar.projectName=SpringBootPet -Dsonar.projectKey=bkrrajmali_springbootpet \
                 -Dsonar.java.binaries=. '''
               }
            }
