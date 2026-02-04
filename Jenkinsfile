@@ -2,7 +2,6 @@ pipeline {
     agent any
     tools{
         maven 'maven'
-        sonarQubeScanner 'sonar-scanner'
     }
     stages {
         stage('Checkout From Git') {
