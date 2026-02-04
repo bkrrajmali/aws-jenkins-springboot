@@ -63,6 +63,12 @@ pipeline {
               }
             }
           }
-
+        stage("Build Docker Image and TAG") {
+            steps {
+              script {
+                sh 'docker build -t springboot:latest .'
+              }
+            }
         }
+    }
 }
