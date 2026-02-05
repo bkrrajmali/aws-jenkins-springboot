@@ -70,10 +70,19 @@ pipeline {
               }
             }
         }
-        stage("Trivy Scan") {
+        // stage("Trivy Scan") {
+        //     steps {
+        //       script {
+        //         sh 'trivy image --format table --scanners vuln -o trivy-image-report.html springboot:latest'
+        //       }
+        //     }
+        // }
+        stage("Push Docker Image to AWS ECR") {
             steps {
               script {
-                sh 'trivy image --format table --scanners vuln -o trivy-image-report.html springboot:latest'
+                sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 175157388210.dkr.ecr.us-east-1.amazonaws.com'
+                sh 'docker tag springboot:latest 175157388210.dkr.ecr.us-east-1.amazonaws.com/myrepo:latest'
+                sh 'docker push 175157388210.dkr.ecr.us-east-1.amazonaws.com/myrepo:latest'
               }
             }
         }
