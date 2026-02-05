@@ -103,6 +103,7 @@ pipeline {
                 sh 'docker push 175157388210.dkr.ecr.us-east-1.amazonaws.com/myrepo:latest'
               }
             }
+        }
           stage("Deploy To Kubernetes") {
             steps {
               script {
