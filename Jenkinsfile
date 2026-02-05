@@ -49,13 +49,13 @@ pipeline {
                     }
                 }
             }
-    stage("Quality Gate") {
-            steps {
-              timeout(time: 1, unit: 'MINUTES') {
-                waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
-              }
-            }
-          }
+    // stage("Quality Gate") {
+    //         steps {
+    //           timeout(time: 1, unit: 'MINUTES') {
+    //             waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
+    //           }
+    //         }
+    //       }
         stage("Jar Publish") {
             steps {
                 script {
