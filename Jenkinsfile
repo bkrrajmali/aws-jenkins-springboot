@@ -33,13 +33,6 @@ pipeline {
           }
          }
        }
-       stage ('Sonar Analysis') {
-        steps {
-            withSonarQubeEnv('sonarserver') {
-                sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.organization=bkrrajmali -Dsonar.projectName=SpringBootPet -Dsonar.projectKey=bkrrajmali_springbootpet -Dsonar.java.binaries=. '''
-              }
-           }
-        }
     stage('Sonar Analysis') {
     steps {
         script {
