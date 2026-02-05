@@ -66,7 +66,7 @@ pipeline {
                               "files": [
                                 {
                                   "pattern": "target/springbootApp.jar",
-                                  "target": "demomaven-maven-remote",
+                                  "target": "demomaven-libs-release",
                                   "flat": "false",
                                   "props" : "${properties}",
                                   "exclusions": [ "*.sha1", "*.md5"]
