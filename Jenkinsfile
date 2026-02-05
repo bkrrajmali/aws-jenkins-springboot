@@ -11,21 +11,21 @@ pipeline {
         }
         stage ('Maven Parallel Stages') {
             parallel {
-        //     stage ('Maven Validate'){
-        //     steps {
-        //         sh 'mvn validate'
-        //     }
-        // }
-        // stage ('Maven Compile'){
-        //     steps {
-        //         sh 'mvn compile'
-        //     }
-        // }
-        //  stage ('Maven Test'){
-        //     steps {
-        //         sh 'mvn test'
-        //     }
-        // }
+            stage ('Maven Validate'){
+            steps {
+                sh 'mvn validate'
+            }
+        }
+        stage ('Maven Compile'){
+            steps {
+                sh 'mvn compile'
+            }
+        }
+         stage ('Maven Test'){
+            steps {
+                sh 'mvn test'
+            }
+        }
         stage ('Maven Package'){
             steps {
                 sh 'mvn package'
@@ -33,36 +33,61 @@ pipeline {
           }
          }
        }
-    //    stage ('Sonar Analysis') {
-    //     steps {
-    //         withSonarQubeEnv('sonarserver') {
-    //             sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.organization=bkrrajmali -Dsonar.projectName=SpringBootPet -Dsonar.projectKey=bkrrajmali_springbootpet -Dsonar.java.binaries=. '''
-    //           }
-    //        }
-    //     }
-    // stage('Sonar Analysis') {
-    // steps {
-    //     script {
-    //         def scannerHome = tool 'sonar-scanner'
-    //         withSonarQubeEnv('sonarserver') {
-    //             sh """
-    //             ${scannerHome}/bin/sonar-scanner \
-    //             -Dsonar.organization=bkrrajmali \
-    //             -Dsonar.projectName=SpringBootPet \
-    //             -Dsonar.projectKey=bkrrajmali_springbootpet \
-    //             -Dsonar.java.binaries=target
-    //             """
-    //                     }
-    //                 }
-    //             }
-    //         }
-    // stage("Quality Gate") {
-    //         steps {
-    //           timeout(time: 1, unit: 'MINUTES') {
-    //             waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
-    //           }
-    //         }
-    //       }
+       stage ('Sonar Analysis') {
+        steps {
+            withSonarQubeEnv('sonarserver') {
+                sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.organization=bkrrajmali -Dsonar.projectName=SpringBootPet -Dsonar.projectKey=bkrrajmali_springbootpet -Dsonar.java.binaries=. '''
+              }
+           }
+        }
+    stage('Sonar Analysis') {
+    steps {
+        script {
+            def scannerHome = tool 'sonar-scanner'
+            withSonarQubeEnv('sonarserver') {
+                sh """
+                ${scannerHome}/bin/sonar-scanner \
+                -Dsonar.organization=bkrrajmali \
+                -Dsonar.projectName=SpringBootPet \
+                -Dsonar.projectKey=bkrrajmali_springbootpet \
+                -Dsonar.java.binaries=target
+                """
+                        }
+                    }
+                }
+            }
+    stage("Quality Gate") {
+            steps {
+              timeout(time: 1, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true, credentialsId: 'sonar'
+              }
+            }
+          }
+        stage("Jar Publish") {
+            steps {
+                script {
+                        echo '<--------------- Jar Publish Started --------------->'
+                         def server = Artifactory.newServer url:registry+"/artifactory" ,  credentialsId:"jfrogaccess"
+                         def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}";
+                         def uploadSpec = """{
+                              "files": [
+                                {
+                                  "pattern": "target/springbootApp.jar",
+                                  "target": "demomaven-maven-remote",
+                                  "flat": "false",
+                                  "props" : "${properties}",
+                                  "exclusions": [ "*.sha1", "*.md5"]
+                                }
+                             ]
+                         }"""
+                         def buildInfo = server.upload(uploadSpec)
+                         buildInfo.env.collect()
+                         server.publishBuildInfo(buildInfo)
+                         echo '<--------------- Jar Publish Ended --------------->'  
+                
+                }
+            }   
+        } 
         stage("Build Docker Image and TAG") {
             steps {
               script {
@@ -70,13 +95,13 @@ pipeline {
               }
             }
         }
-        // stage("Trivy Scan") {
-        //     steps {
-        //       script {
-        //         sh 'trivy image --format table --scanners vuln -o trivy-image-report.html springboot:latest'
-        //       }
-        //     }
-        // }
+        stage("Trivy Scan") {
+            steps {
+              script {
+                sh 'trivy image --format table --scanners vuln -o trivy-image-report.html springboot:latest'
+              }
+            }
+        }
         stage("Push Docker Image to AWS ECR") {
             steps {
               script {
@@ -85,6 +110,14 @@ pipeline {
                 sh 'docker push 175157388210.dkr.ecr.us-east-1.amazonaws.com/myrepo:latest'
               }
             }
+          stage("Deploy To Kubernetes") {
+            steps {
+              script {
+                sh 'aws eks update-kubeconfig --region us-east-1 --name eksdemo1'
+                sh 'kubectl apply -f k8s/sprinboot-deployment.yaml'
+              }
+            }
+        }
         }
     }
 }
