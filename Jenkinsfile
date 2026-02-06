@@ -108,7 +108,7 @@ pipeline {
           stage("Deploy To Kubernetes") {
             steps {
               script {
-                sh 'aws eks update-kubeconfig --region us-east-1 --name eksdemo1'
+                sh 'aws eks update-kubeconfig --region us-east-1 --name eksdemo2'
                 sh 'kubectl apply -f k8s/sprinboot-deployment.yaml'
               }
             }
